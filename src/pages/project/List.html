@@ -1,0 +1,25 @@
+﻿<template>
+    <div class="fulwidth">
+        <mt-header title="项目信息"></mt-header>
+        <template v-for="item in projects">
+            <mt-cell :title="item.name" @click.native="projectClick(item)"></mt-cell>
+        </template>
+    </div>
+</template>
+<script>
+    import Vue from 'vue'
+    import { mapState } from 'vuex'
+
+    export default {
+        computed: mapState('project', {
+            projects: 'projects'
+        }),
+        methods: {
+            projectClick: function (e) {
+                this.$router.push({ name: 'tablelist', params: { id: e.id } })
+            }
+        },
+    }
+</script>
+<style scoped>
+</style>

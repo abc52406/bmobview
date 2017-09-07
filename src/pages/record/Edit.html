@@ -1,0 +1,60 @@
+﻿<template>
+    <div class="fulwidth">
+        <mt-header :title="tabletitle"></mt-header>
+        <template v-for="item in model">
+            <mt-cell v-if="item.type==='input'||item.type==='date'" :title="item.name">
+                <span>{{item.value}}</span>
+            </mt-cell>
+            <mt-cell v-if="item.type==='textarea'" :title="item.name" :label="item.value">
+            </mt-cell>
+            <mt-cell v-if="item.type==='imagesArray'" :title="item.name">
+                <span>{{item.value.length}}张</span>
+            </mt-cell>
+            <mt-swipe v-if="item.type==='imagesArray'&&item.value.length" :auto="4000">
+                <template v-for="img in item.value">
+                    <mt-swipe-item><img :src="img" class="fullwidth" /></mt-swipe-item>
+                </template>
+            </mt-swipe>
+            <mt-cell v-if="item.type==='imageurl'" :title="item.name">
+                <img :src="item.value" style="width:60%;">
+            </mt-cell>
+        </template>
+    </div>
+</template>
+<script>
+    import Vue from 'vue'
+    import { mapState, mapGetters, mapActions } from 'vuex'
+
+    export default {
+        data: function () {
+            return {
+                model: [],
+            }
+        },
+        computed: {
+            ...mapState('project', {
+                currenttable: 'currenttable'
+            }),
+            ...mapGetters('project', {
+                tabletitle: 'tabletitle'
+            })
+        },
+        methods: {
+            ...mapActions('project', [
+                'getRecord'
+            ])
+        },
+        created() {
+            this.getRecord({ id: this.$route.params.id }).then((item) => {
+                this.model = item
+            });
+        },
+
+    }
+</script>
+<style scoped>
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+</style>

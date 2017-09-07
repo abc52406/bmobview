@@ -1,0 +1,75 @@
+﻿<template>
+    <div class="fulwidth">
+        <mt-header :title="tabletitle"></mt-header>
+        <ul v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="disableload"
+            infinite-scroll-distance="10">
+            <template v-for="item in records">
+                <li>
+                    <mt-cell :title="item.title" :label="item.desc" @click.native="recordClick(item)">
+                        <span>{{item.subtitle}}</span>
+                    </mt-cell>
+                </li>
+            </template>
+        </ul>
+    </div>
+</template>
+<script>
+    import Vue from 'vue'
+    import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+
+    export default {
+        data: function () {
+            return {
+                liststate: 'loading',
+            }
+        },
+        computed: {
+            ...mapState('project', {
+                currenttable: 'currenttable',
+                records:'records'
+            }),
+            ...mapGetters('project', {
+                tabletitle: 'tabletitle'
+            }),
+            disableload: function () {
+                return this.liststate !=='loaded'
+            }
+        },
+        methods: {
+            ...mapMutations('project', [
+                'Set_CurrentTable', 'Set_PageSize', 'Set_PageIndex', 'Set_SortField', 'Set_SortType'
+            ]),
+            ...mapActions('project', [
+                'getTable','getRecords'
+            ]),
+            recordClick: function (e) {
+                this.$router.push({ name: 'recordedit', params: { id: e.id } })
+            },
+            loadMore: function (e) {
+                this.liststate = 'loading'
+                this.getRecords().then((list) => {
+                    this.liststate = list.length > 0 ? 'loaded' : 'finished'
+                }, (error) => {
+                    this.liststate = 'loaded'
+                });
+            }
+        },
+        created() {
+            this.getTable({ code: this.$route.params.id}).then((item) => {
+                this.Set_CurrentTable({ table: item });
+                this.Set_PageSize({ size: 20 })
+                this.Set_PageIndex({ index: 0 })
+                this.Set_SortField({ field: 'createdAt' })
+                this.Set_SortType({ type: 'desc' })
+                this.loadMore('create');
+            });
+        },
+    }
+</script>
+<style scoped>
+    ul {
+        padding:0;
+        margin:0;
+    }
+</style>

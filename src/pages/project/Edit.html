@@ -1,0 +1,19 @@
+﻿<template>
+    <div class="page abs">
+        <template v-for="item in list">
+            <mt-cell :title="item.name"></mt-cell>
+        </template>
+    </div>
+</template>
+<script>
+    import Vue from 'vue'
+    import { mapGetters } from 'vuex'
+
+    export default {
+        computed: mapGetters('project', {
+            list: 'list'
+        })
+    }
+</script>
+<style scoped>
+</style>

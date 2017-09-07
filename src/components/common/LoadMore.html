@@ -1,0 +1,19 @@
+﻿<template>
+    <div class="loadmore font-s am-text-center">
+        <span v-show="state=='loading'">{{$store.state.loadingtext}}</span>
+        <span v-show="state=='loaded'">{{$store.state.loadedtext}}</span>
+        <span v-show="state=='finished'">{{$store.state.finishedtext}}</span>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'loadmore',
+        props: ['state'],
+    }
+</script>
+
+<style scoped>
+    .loadmore {
+        padding:5px 0;
+    }
+</style>
